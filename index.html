@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cifrador</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #f0ede8;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 36px;
+    width: 100%;
+    max-width: 520px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05);
+  }
+
+  h1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+  }
+
+  .tagline {
+    font-size: 13px;
+    color: #999;
+    margin-bottom: 28px;
+  }
+
+  /* Método */
+  .methods {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .method-btn {
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1.5px solid #e0ddd8;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+
+  .method-btn:hover { border-color: #c8a96a; color: #1a1a1a; }
+  .method-btn.active {
+    background: #1a1a1a;
+    border-color: #1a1a1a;
+    color: #fff;
+  }
+
+  /* Llave */
+  .key-row {
+    margin-bottom: 18px;
+  }
+
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+
+  input {
+    width: 100%;
+    border: 1.5px solid #e8e5e0;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    color: #1a1a1a;
+    background: #faf9f7;
+    outline: none;
+    transition: border-color 0.18s;
+  }
+  input:focus { border-color: #c8a96a; background: #fff; }
+
+  textarea {
+    width: 100%;
+    border: 1.5px solid #e8e5e0;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: #1a1a1a;
+    background: #faf9f7;
+    resize: vertical;
+    min-height: 90px;
+    outline: none;
+    transition: border-color 0.18s;
+    line-height: 1.6;
+  }
+  textarea:focus { border-color: #c8a96a; background: #fff; }
+
+  .row { margin-bottom: 16px; }
+
+  /* Botones acción */
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 20px 0;
+  }
+
+  .btn {
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+
+  .btn-encrypt {
+    background: #1a1a1a;
+    color: #fff;
+  }
+  .btn-encrypt:hover { background: #333; transform: translateY(-1px); }
+
+  .btn-decrypt {
+    background: #f0ede8;
+    color: #1a1a1a;
+    border: 1.5px solid #e0ddd8;
+  }
+  .btn-decrypt:hover { background: #e8e4de; transform: translateY(-1px); }
+
+  /* Output */
+  .output-wrap {
+    background: #faf9f7;
+    border: 1.5px solid #e8e5e0;
+    border-radius: 10px;
+    padding: 14px;
+    min-height: 70px;
+    position: relative;
+  }
+
+  .output-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: #1a1a1a;
+    line-height: 1.6;
+    word-break: break-all;
+    white-space: pre-wrap;
+  }
+
+  .output-empty { color: #bbb; font-style: italic; font-family: 'DM Sans', sans-serif; font-size: 13px; }
+
+  .copy-btn {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: #fff;
+    border: 1.5px solid #e0ddd8;
+    border-radius: 8px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-family: 'DM Sans', sans-serif;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { border-color: #1a1a1a; color: #1a1a1a; }
+
+  .error { color: #d94f4f; font-size: 13px; }
+
+  .divider {
+    height: 1px;
+    background: #f0ede8;
+    margin: 20px 0;
+  }
+
+  .hint {
+    font-size: 11.5px;
+    color: #aaa;
+    margin-top: 12px;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>🔐 Cifrador</h1>
+  <p class="tagline">Encripta y desencripta texto de forma sencilla</p>
+
+  <div class="methods">
+    <button class="method-btn active" onclick="setMethod('caesar', this)">César</button>
+    <button class="method-btn" onclick="setMethod('base64', this)">Base64</button>
+    <button class="method-btn" onclick="setMethod('rot13', this)">ROT-13</button>
+    <button class="method-btn" onclick="setMethod('atbash', this)">Atbash</button>
+  </div>
+
+  <div class="key-row" id="keyRow">
+    <label>Desplazamiento (0 – 25)</label>
+    <input type="number" id="keyInput" min="0" max="25" value="3" placeholder="Ej: 3">
+  </div>
+
+  <div class="row">
+    <label>Texto</label>
+    <textarea id="inputText" placeholder="Escribe aquí tu mensaje..."></textarea>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-encrypt" onclick="run('encrypt')">Encriptar ↑</button>
+    <button class="btn btn-decrypt" onclick="run('decrypt')">Desencriptar ↓</button>
+  </div>
+
+  <div class="divider"></div>
+
+  <label>Resultado</label>
+  <div class="output-wrap">
+    <div id="output" class="output-empty">El resultado aparecerá aquí...</div>
+    <button class="copy-btn" onclick="copyResult()">Copiar</button>
+  </div>
+
+  <p class="hint" id="hint">César: desplaza cada letra N posiciones en el alfabeto.</p>
+</div>
+
+<script>
+  let method = 'caesar';
+
+  const hints = {
+    caesar:  'César: desplaza cada letra N posiciones en el alfabeto.',
+    base64:  'Base64: codificación estándar. No necesita llave.',
+    rot13:   'ROT-13: desplazamiento fijo de 13 letras. Simétrico (encriptar = desencriptar).',
+    atbash:  'Atbash: A↔Z, B↔Y... Simétrico (encriptar = desencriptar).'
+  };
+
+  function setMethod(m, btn) {
+    method = m;
+    document.querySelectorAll('.method-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('keyRow').style.display = m === 'caesar' ? 'block' : 'none';
+    document.getElementById('hint').textContent = hints[m];
+    document.getElementById('output').className = 'output-empty';
+    document.getElementById('output').textContent = 'El resultado aparecerá aquí...';
+  }
+
+  function run(mode) {
+    const text = document.getElementById('inputText').value;
+    if (!text.trim()) { showResult('Escribe algo primero.', true); return; }
+
+    try {
+      let result = '';
+      if (method === 'caesar') {
+        const shift = parseInt(document.getElementById('keyInput').value) || 0;
+        result = caesar(text, mode === 'encrypt' ? shift : -shift);
+      } else if (method === 'base64') {
+        result = mode === 'encrypt' ? btoa(unescape(encodeURIComponent(text))) : decodeURIComponent(escape(atob(text)));
+      } else if (method === 'rot13') {
+        result = rot13(text);
+      } else if (method === 'atbash') {
+        result = atbash(text);
+      }
+      showResult(result, false);
+    } catch(e) {
+      showResult('Error: texto inválido para este método.', true);
+    }
+  }
+
+  function caesar(text, shift) {
+    shift = ((shift % 26) + 26) % 26;
+    return text.split('').map(c => {
+      if (c >= 'a' && c <= 'z') return String.fromCharCode((c.charCodeAt(0) - 97 + shift) % 26 + 97);
+      if (c >= 'A' && c <= 'Z') return String.fromCharCode((c.charCodeAt(0) - 65 + shift) % 26 + 65);
+      return c;
+    }).join('');
+  }
+
+  function rot13(text) {
+    return text.split('').map(c => {
+      if (c >= 'a' && c <= 'z') return String.fromCharCode((c.charCodeAt(0) - 97 + 13) % 26 + 97);
+      if (c >= 'A' && c <= 'Z') return String.fromCharCode((c.charCodeAt(0) - 65 + 13) % 26 + 65);
+      return c;
+    }).join('');
+  }
+
+  function atbash(text) {
+    return text.split('').map(c => {
+      if (c >= 'a' && c <= 'z') return String.fromCharCode(122 - (c.charCodeAt(0) - 97));
+      if (c >= 'A' && c <= 'Z') return String.fromCharCode(90 - (c.charCodeAt(0) - 65));
+      return c;
+    }).join('');
+  }
+
+  function showResult(text, isError) {
+    const el = document.getElementById('output');
+    el.textContent = text;
+    el.className = isError ? 'error' : 'output-text';
+  }
+
+  function copyResult() {
+    const txt = document.getElementById('output').textContent;
+    if (txt && !txt.includes('aparecerá')) navigator.clipboard.writeText(txt);
+  }
+</script>
+</body>
+</html>
